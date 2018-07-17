@@ -6,18 +6,29 @@ Chrome/Chromium demo extension.
 * Native Messaging
 * Multi-language support
 
+## Toolbar Popup
+TBD...
+
+## Native Messaging
+TBD...
 
 ## Multilanguage support
 
 ### References
 
-https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
-https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n
-https://stackoverflow.com/questions/16909246/how-to-provide-multiple-languages-for-a-chrome-extension?rq=1
 https://developer.chrome.com/extensions/i18n
+
 https://developer.chrome.com/extensions/i18n-messages
-https://jayeshcp.wordpress.com/2014/04/02/how-to-use-internationalization-in-chrome-extensionapp/
+
 https://developer.chrome.com/webstore/i18n
+
+https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
+
+https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n
+
+https://stackoverflow.com/questions/16909246/how-to-provide-multiple-languages-for-a-chrome-extension?rq=1
+
+https://jayeshcp.wordpress.com/2014/04/02/how-to-use-internationalization-in-chrome-extensionapp/
 
 
 ### How to test multi-language extension?
