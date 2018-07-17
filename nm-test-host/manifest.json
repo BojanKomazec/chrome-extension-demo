@@ -1,0 +1,9 @@
+{
+  "name": "com.bojankomazec.extension_nmdemo_test_host",
+  "description": "Native Messaging Host Application for NM Demo Extension",
+  "path": ".\\ExtensionNMDemoTestHost\\Debug\\ExtensionNMDemoTestHost.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://ncchkbdaapabdkaijcoajfblkeiffacd/"
+  ]
+}

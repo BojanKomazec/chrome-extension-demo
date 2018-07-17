@@ -1,2 +1,6 @@
 # chrome-extension-demo
-Chorme/Chromium demo extension
+Chrome/Chromium demo extension.
+
+Features shown:
+* Toolbar Popup
+* Native Messaging
