@@ -1,0 +1,45 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+    <head>
+        <title>Extension Demo</title>
+        <link type="text/css" href="../styles/main.css" rel="stylesheet"></link>
+        <!--
+            - JavaScript and HTML must be in separate files: see our Content Security
+            - Policy documentation[1] for details and explanation.
+            -
+            - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+        -->
+    </head>
+    <body>
+        <h1>Extension Demo</h1>
+        <!--
+        <button id='connect-button'>Connect</button>
+        <input id='input-text' type='text' />
+        <button id='send-message-button'>Send</button>
+        <div id='response'></div>
+        -->
+        <div id="container">
+            <span>Colours:</span>
+            <select id="dropdown">
+            <option selected disabled hidden value=''></option>
+            <option value="0">White</option>
+            <option value="1">Yellow</option>
+            <option value="2">Red</option>
+            <option value="3">Blue</option>
+            </select>
+        </div>
+        <div>
+            <span>Slider: </span>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <script src="../scripts/main.js"></script>
+    </body>
+</html>
