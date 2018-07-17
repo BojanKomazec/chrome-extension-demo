@@ -17,20 +17,14 @@
     </head>
     <body>
         <h1>Extension Demo</h1>
-        <!--
-        <button id='connect-button'>Connect</button>
-        <input id='input-text' type='text' />
-        <button id='send-message-button'>Send</button>
-        <div id='response'></div>
-        -->
         <div id="container">
-            <span>Colours:</span>
+            <span id="text-pick-colour">Colours:</span>
             <select id="dropdown">
-            <option selected disabled hidden value=''></option>
-            <option value="0">White</option>
-            <option value="1">Yellow</option>
-            <option value="2">Red</option>
-            <option value="3">Blue</option>
+                <option selected disabled hidden value=''></option>
+                <option value="0">White</option>
+                <option value="1">Yellow</option>
+                <option value="2">Red</option>
+                <option value="3">Blue</option>
             </select>
         </div>
         <div>
@@ -40,6 +34,10 @@
                 <span class="slider round"></span>
             </label>
         </div>
+        <button id='connect-button'>Connect</button>
+        <input id='input-text' type='text' />
+        <button id='send-message-button'>Send</button>
+        <div id='response'></div>
         <script src="../scripts/main.js"></script>
     </body>
 </html>

@@ -219,19 +219,18 @@ function connect() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-//console.log("Event: " + event.type);  
-  document.getElementById('connect-button').addEventListener(
-      'click', connect);
-  document.getElementById('send-message-button').addEventListener(
-      'click', sendNativeMessageFromUser);
-  updateUiState();
+    document.getElementById('connect-button').addEventListener('click', connect);
+    document.getElementById('send-message-button').addEventListener('click', sendNativeMessageFromUser);
+    updateUiState();
 });
 
 // 'DOMContentLoaded' event is fired before 'load'
 window.addEventListener("load", function(event) {
-  console.log("Event: " + event.type);
-  connect();
-  sendNativeMessage("colours");
+    console.log("Event: " + event.type);
+    let pickColourText = chrome.i18n.getMessage('pickacolour');
+    document.getElementById('text-pick-colour').innerHTML = pickColourText;
+    connect();
+    sendNativeMessage("colours");
   // 'unload' event is fired for the popup but its Console can't be 
   // used after it's unloaded. We can send log message to the 
   // background page instead.

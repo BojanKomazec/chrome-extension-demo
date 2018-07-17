@@ -9,9 +9,10 @@
         "default_icon" : "/img/flash.png",
         "default_popup" : "/views/main.html"
     },
-
     "permissions" : [
         "nativeMessaging",
         "storage"
-    ]
+    ],
+    "default_locale" : "fr",
+    "pickacolour" : "__MSG_pickacolour__"
 }
