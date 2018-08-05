@@ -17,8 +17,8 @@ https://developer.chrome.com/extensions/nativeMessaging
 
 The one implemented for this demo is written in C++.
 
-Binary name: ExtensionNMDemoTestHost.exe
-Log output file: ExtensionNMDemoTestHost.log
+**Binary name:** ExtensionNMDemoTestHost.exe<br/>
+**Log output file:** ExtensionNMDemoTestHost.log
 
 It uses amalgameted JsonCpp source and header files. For details see: https://github.com/open-source-parsers/jsoncpp/wiki/Amalgamated
 
@@ -28,12 +28,14 @@ g++ -v -o bin/ExtensionNMDemoTestHost.exe ProcessMessage.cpp third-party/jsoncpp
 ```
 
 To run it:
-Open mingw64\bin directory (e.g. C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin) and copy to build output directory necessary MinGW dependencies:
-* libgcc_s_seh-1.dll
-* libstdc++-6.dll
-* libwinpthread-1.dll
+Open `mingw64\bin` directory (e.g. `C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin`) and copy to build output directory necessary MinGW dependencies:
+* `libgcc_s_seh-1.dll`
+* `libstdc++-6.dll`
+* `libwinpthread-1.dll`
 
 Use Dependency Walker to find out all dependencies.
+
+If some dependency can't be found in runtime, launching the app will fail and extension will disconnect from it with error message *"Error when communicating with the native messaging host."*. Process Monitor can be used to verify that all dependencies have been successfully found and loaded.
 
 
 ## Multilanguage support
