@@ -71,6 +71,7 @@ bool ProcessRequest(const std::string& request, std::vector<char>& response, boo
             std::string json = outgoing_json.toStyledString();
             response.resize(json.length() + 1);
             std::copy(json.c_str(), json.c_str() + json.length() + 1, response.begin());
+            isExitRequested = true;
         }
         else { // echo request 
             Json::Value outgoing_json;

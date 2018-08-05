@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+const NM_ENDPOINT_NAME = "com.bojankomazec.extension_nmdemo_test_host";
+const API_VERSION_MAJOR = 1;
+const API_VERSION_MINOR = 0;
+
 /**
  * Get the current URL.
  *
@@ -202,7 +206,6 @@ function onNativeMessage(message) {
 // failed to connect
 function onDisconnected() {
     console.log("Disconnected: " + chrome.runtime.lastError.message);
-    //appendMessage("Disconnected: " + chrome.runtime.lastError.message);
     port = null;
     updateUiState();
 }
@@ -210,7 +213,7 @@ function onDisconnected() {
 // Parameters:
 // application (string)
 // message (object)
-function sendNativeMessageAsync(application, message/*, resolve, reject*/) {
+function sendNativeMessageAsync(application, message) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendNativeMessage(application, message, function(response) {
             if (typeof response === 'undefined') {
@@ -224,32 +227,46 @@ function sendNativeMessageAsync(application, message/*, resolve, reject*/) {
     });
 }
 
-async function getNativeApplicationApiVersion() {
-    try {
-        let response = await sendNativeMessageAsync();
-        console.log(`response = ${response}`);
-    } catch(e) {
-        console.log(`e = ${e}`);
-    }
+async function areApisCompatible() {
+    // try {
+        let areMajorVersionsEqual = false;
+        let response = await sendNativeMessageAsync(NM_ENDPOINT_NAME, {"text": 'get_api_version'});
+        console.log(`response = ${response}`); // {"get_api_version":"1.0"}
+        const [versionMajor, versionMinor] = response['get_api_version'].split('.').map(s => parseInt(s, 10));
+        if (versionMajor == API_VERSION_MAJOR) {
+            console.log('Extension and native application have compatible APIs.')
+            areMajorVersionsEqual = true;
+        } else if (versionMajor > API_VERSION_MAJOR) {
+            console.log('WARNING: Extension has to be updated.')
+        } else if (versionMajor < API_VERSION_MAJOR) {
+            console.log('WARNING: Native application has to be updated.')
+        }
+        return areMajorVersionsEqual;
+    // } catch(e) {
+    //     console.log(`e = ${e}`);
+    // }
 }
 
 function connect() {
-    console.log('connect()');
-    const hostName = "com.bojankomazec.extension_nmdemo_test_host";
-    //appendMessage("Connecting to native messaging host <b>" + hostName + "</b>")
-    console.log('Connecting to native messaging host: ' + hostName);
-    port = chrome.runtime.connectNative(hostName);
+    console.log('Connecting to native messaging host: ' + NM_ENDPOINT_NAME);
+    port = chrome.runtime.connectNative(NM_ENDPOINT_NAME);
     port.onMessage.addListener(onNativeMessage);
     port.onDisconnect.addListener(onDisconnected);
-    if (port !== null) {
-        console.log('NM port opened.');
-    }
     updateUiState();
 }
 
-function onButtonConnectClick() {
-    connect();
-    sendNativeMessage("colours");
+async function onButtonConnectClick() {
+    try {
+        console.log('Checking NM app API version...');
+        let apisCompatible = await areApisCompatible();
+        if (apisCompatible) {
+            connect();
+            console.log('Loading colours...');
+            sendNativeMessage("colours");
+        }
+    } catch(e) {
+        console.log(`ERROR: ${e.Message}`);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
