@@ -151,75 +151,109 @@ var getKeys = function(obj) {
 // }
 
 function updateUiState() {
-  if (port) {
-    document.getElementById('connect-button').style.display = 'none';
-    document.getElementById('input-text').style.display = 'block';
-    document.getElementById('send-message-button').style.display = 'block';
-  } else {
-    document.getElementById('connect-button').style.display = 'block';
-    document.getElementById('input-text').style.display = 'none';
-    document.getElementById('send-message-button').style.display = 'none';
-  }
+    if (port !== null) {
+        document.getElementById('connect-button').style.display = 'none';
+        document.getElementById('input-text').style.display = 'block';
+        document.getElementById('send-message-button').style.display = 'block';
+    } else {
+        document.getElementById('connect-button').style.display = 'block';
+        document.getElementById('input-text').style.display = 'none';
+        document.getElementById('send-message-button').style.display = 'none';
+    }
 }
 
 function sendNativeMessage(message) {
-  console.log('sendNativeMessage(): ' + JSON.stringify(message));
-  message = {"text": message};
-  port.postMessage(message);
-//appendMessage("Sent message: <b>" + JSON.stringify(message) + "</b>");
+    console.log('sendNativeMessage(): ' + JSON.stringify(message));
+    message = {"text": message};
+    port.postMessage(message);
+    //appendMessage("Sent message: <b>" + JSON.stringify(message) + "</b>");
 }
 
 function sendNativeMessageFromUser() {
-  sendNativeMessage(document.getElementById('input-text').value);
+    sendNativeMessage(document.getElementById('input-text').value);
 }
 
 function onNativeMessage(message) {
-  //  appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
-  console.log('onNativeMessage: ' + JSON.stringify(message));
-  // 'message' variable is already a JSON object (JS interpreter automatically 
-  // parses JSON strings and crates an object).
-  // Therefore...
-  //    JSON.parse(message);
-  // ...will fail with error "SyntaxError: Unexpected token o in JSON at position 1" 
-  // (error can be seen in console). So, there is no need to call JSON.parse().
-  // The fact that we're using JSON.stringify() earlier tells us also that
-  // 'message' is JSON object.
+    //  appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
+    console.log('onNativeMessage: ' + JSON.stringify(message));
+    // 'message' variable is already a JSON object (JS interpreter automatically 
+    // parses JSON strings and crates an object).
+    // Therefore...
+    //    JSON.parse(message);
+    // ...will fail with error "SyntaxError: Unexpected token o in JSON at position 1" 
+    // (error can be seen in console). So, there is no need to call JSON.parse().
+    // The fact that we're using JSON.stringify() earlier tells us also that
+    // 'message' is JSON object.
 
-  // if message is response to "colours" request, it will look similar to this:
-  //    {"colours":["White","Yellow","Beige","Aquamarin"]}
-  if (message["colours"]) {
-    removeOptions(document.getElementById("dropdown"));
-    for (var i = 0; i < message.colours.length; i++) {
-      var colour = message.colours[i];
-      // console.log(colour);
-      var option = document.createElement('option');
-      option.text = colour;
-      document.getElementById("dropdown").add(option, 0);
+    // if message is response to "colours" request, it will look similar to this:
+    //    {"colours":["White","Yellow","Beige","Aquamarin"]}
+    if (message["colours"]) {
+        removeOptions(document.getElementById("dropdown"));
+        for (var i = 0; i < message.colours.length; i++) {
+            var colour = message.colours[i];
+            // console.log(colour);
+            var option = document.createElement('option');
+            option.text = colour;
+            document.getElementById("dropdown").add(option, 0);
+        }
     }
-  }
 }
 
 // failed to connect
 function onDisconnected() {
-  console.log("Disconnected: " + chrome.runtime.lastError.message);
-//appendMessage("Disconnected: " + chrome.runtime.lastError.message);
-  port = null;
-  updateUiState();
+    console.log("Disconnected: " + chrome.runtime.lastError.message);
+    //appendMessage("Disconnected: " + chrome.runtime.lastError.message);
+    port = null;
+    updateUiState();
+}
+
+// Parameters:
+// application (string)
+// message (object)
+function sendNativeMessageAsync(application, message/*, resolve, reject*/) {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendNativeMessage(application, message, function(response) {
+            if (typeof response === 'undefined') {
+                console.log(`chrome.runtime.sendNativeMessage failed with error: ${chrome.runtime.lastError}`);
+                reject(chrome.runtime.lastError);
+            } else {
+                console.log(`chrome.runtime.sendNativeMessage received response: ${JSON.stringify(response)}`);
+                resolve(response);
+            }
+        })
+    });
+}
+
+async function getNativeApplicationApiVersion() {
+    try {
+        let response = await sendNativeMessageAsync();
+        console.log(`response = ${response}`);
+    } catch(e) {
+        console.log(`e = ${e}`);
+    }
 }
 
 function connect() {
-  console.log('connect()');
-  var hostName = "com.bojankomazec.extension_nmdemo_test_host";
-//appendMessage("Connecting to native messaging host <b>" + hostName + "</b>")
-  console.log('Connecting to native messaging host: ' + hostName);
-  port = chrome.runtime.connectNative(hostName);
-  port.onMessage.addListener(onNativeMessage);
-  port.onDisconnect.addListener(onDisconnected);
-  updateUiState();
+    console.log('connect()');
+    const hostName = "com.bojankomazec.extension_nmdemo_test_host";
+    //appendMessage("Connecting to native messaging host <b>" + hostName + "</b>")
+    console.log('Connecting to native messaging host: ' + hostName);
+    port = chrome.runtime.connectNative(hostName);
+    port.onMessage.addListener(onNativeMessage);
+    port.onDisconnect.addListener(onDisconnected);
+    if (port !== null) {
+        console.log('NM port opened.');
+    }
+    updateUiState();
+}
+
+function onButtonConnectClick() {
+    connect();
+    sendNativeMessage("colours");
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('connect-button').addEventListener('click', connect);
+    document.getElementById('connect-button').addEventListener('click', onButtonConnectClick);
     document.getElementById('send-message-button').addEventListener('click', sendNativeMessageFromUser);
     updateUiState();
 });
@@ -229,8 +263,8 @@ window.addEventListener("load", function(event) {
     console.log("Event: " + event.type);
     let pickColourText = chrome.i18n.getMessage('pickacolour');
     document.getElementById('text-pick-colour').innerHTML = pickColourText;
-    connect();
-    sendNativeMessage("colours");
+    // connect();
+    // sendNativeMessage("colours");
   // 'unload' event is fired for the popup but its Console can't be 
   // used after it's unloaded. We can send log message to the 
   // background page instead.

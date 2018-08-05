@@ -1,8 +1,7 @@
-#include "stdafx.h"
-#include "ProcessMessage.h"
-#include "json\json-forwards.h"
-#include "json\json.h"
-#include "Windows.h" //ExitWindowsEx
+#include "third-party/json/json-forwards.h"
+#include "third-party/json/json.h"
+#include "include/ProcessMessage.h"
+//#include "Windows.h" //ExitWindowsEx
 
 // Edit this file to handle more incoming_message message from chromium browser
 
@@ -21,21 +20,20 @@ bool ExtractRequest(const std::vector<char>& incoming_message, std::string& requ
 
     if (is_success) {
         auto incoming_message = root.toStyledString();
-        OutputDebugString(L"Incoming message: ");
-        OutputDebugStringA(incoming_message.c_str());
+        //OutputDebugString(L"Incoming message: ");
+        //OutputDebugStringA(incoming_message.c_str());
         request = root.get("text", "").asString();
     }
 
     return is_success;
 }
 
-bool ProcessRequest(const std::string& request, std::vector<char>& response, bool& isExitRequested)
-{
+bool ProcessRequest(const std::string& request, std::vector<char>& response, bool& isExitRequested) {
     auto is_success = false;
 
     if (request.length() > 0) {
         if (request == "logoff_windows") {
-            ExitWindowsEx(EWX_LOGOFF, 0);
+            //ExitWindowsEx(EWX_LOGOFF, 0);
         }
         else if (request == "colours") {
             Json::Value root;
@@ -54,17 +52,22 @@ bool ProcessRequest(const std::string& request, std::vector<char>& response, boo
             //std::cout << "'" << Json::writeString(wbuilder, root) << "'" << std::endl;
             std::string json = Json::writeString(wbuilder, root);
 
-            OutputDebugStringA(json.c_str());
+            //OutputDebugStringA(json.c_str());
 
             response.resize(json.length() + 1);
             std::copy(json.c_str(), json.c_str() + json.length() + 1, response.begin());
 
-        }
-        else if (request == "exit") {
+        } else if (request == "exit") {
             isExitRequested = true;
 
             Json::Value outgoing_json;
             outgoing_json[request] = "NM Host will shut down...";
+            std::string json = outgoing_json.toStyledString();
+            response.resize(json.length() + 1);
+            std::copy(json.c_str(), json.c_str() + json.length() + 1, response.begin());
+        } else if (request == "get_api_version") {
+            Json::Value outgoing_json;
+            outgoing_json[request] = "1.0";
             std::string json = outgoing_json.toStyledString();
             response.resize(json.length() + 1);
             std::copy(json.c_str(), json.c_str() + json.length() + 1, response.begin());

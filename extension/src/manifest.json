@@ -4,7 +4,7 @@
     "name" : "Chrome Extension Demo",
     "description" : "An extension which demonstrates various Chrome extension features.",
     "version" : "1.0",
-
+	"key" : "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwKHEFnL3lZwI3rrnyavDUKBLNCmcmz2uYLHkI7aiCXZGxLDav10ywBwcwLbjT+mXCeGFsfz+43C1sVw1DwdOO0fFtcvThxF2GgOXLX78SKrjo/EVk5uIn4pibV7Pa34tP0GgN7YWwoW3IFZEukCj5+vDB3DNLDgMQ0dUhnF1pmtrSRanEuh0xdsEWgDNU9Mi1SpkpqVx0zNzIhLsGbcjyP3+fOJOm/56ov3g5H1hxHTcNaHommnN7Bo793Hl6k4TfWdqMhLz5VZ2gUDg2anjYrPRMkewB+kvT4qXe8DoDeDKvdnod/oV5QwFDb3Tto7VjfmFkHALE8Izxh4ZTWNdJwIDAQAB",
     "browser_action" : {
         "default_icon" : "/img/flash.png",
         "default_popup" : "/views/main.html"

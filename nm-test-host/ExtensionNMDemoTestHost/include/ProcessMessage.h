@@ -1,5 +1,8 @@
-#pragma once
-#include "stdafx.h"
+// #pragma once
+// #include "stdafx.h"
+
+#include <vector>
+#include <string>
 
 bool ExtractRequest(const std::vector<char>& incoming_message, std::string& request);
 
