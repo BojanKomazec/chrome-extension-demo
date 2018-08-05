@@ -10,7 +10,31 @@ Chrome/Chromium demo extension.
 TBD...
 
 ## Native Messaging
-TBD...
+
+https://developer.chrome.com/extensions/nativeMessaging
+
+### Native Messaging host application
+
+The one implemented for this demo is written in C++.
+
+Binary name: ExtensionNMDemoTestHost.exe
+Log output file: ExtensionNMDemoTestHost.log
+
+It uses amalgameted JsonCpp source and header files. For details see: https://github.com/open-source-parsers/jsoncpp/wiki/Amalgamated
+
+To build it use:
+```
+g++ -v -o bin/ExtensionNMDemoTestHost.exe ProcessMessage.cpp third-party/jsoncpp.cpp main.cpp
+```
+
+To run it:
+Open mingw64\bin directory (e.g. C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin) and copy to build output directory necessary MinGW dependencies:
+* libgcc_s_seh-1.dll
+* libstdc++-6.dll
+* libwinpthread-1.dll
+
+Use Dependency Walker to find out all dependencies.
+
 
 ## Multilanguage support
 
