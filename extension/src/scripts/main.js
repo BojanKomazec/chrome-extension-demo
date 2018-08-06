@@ -210,41 +210,48 @@ function onDisconnected() {
     updateUiState();
 }
 
+// Function which wrapps chrome.runtime.sendNativeMessage call in a Promise.
+//
 // Parameters:
-// application (string)
-// message (object)
+//  application (string)
+//  message (object)
+// Returns:
+//  Promise object which gets resolved if extension receives a response from NM host application and rejected otherwise. 
+//
+// If NM host application can't be found, chrome.runtime.lastError.message will be "Specified native messaging host not found."
+//
+// TODO:
+// - move this function to the module with common/shared code
 function sendNativeMessageAsync(application, message) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendNativeMessage(application, message, function(response) {
+            console.log(`chrome.runtime.sendNativeMessage received response: ${JSON.stringify(response)}`);
             if (typeof response === 'undefined') {
-                console.log(`chrome.runtime.sendNativeMessage failed with error: ${chrome.runtime.lastError}`);
-                reject(chrome.runtime.lastError);
+                reject(new Error(`chrome.runtime.sendNativeMessage failed with error: ${chrome.runtime.lastError.message}`));
             } else {
-                console.log(`chrome.runtime.sendNativeMessage received response: ${JSON.stringify(response)}`);
                 resolve(response);
             }
         })
     });
 }
 
+// response example {"get_api_version":"1.0"}
 async function areApisCompatible() {
-    // try {
-        let areMajorVersionsEqual = false;
-        let response = await sendNativeMessageAsync(NM_ENDPOINT_NAME, {"text": 'get_api_version'});
-        console.log(`response = ${response}`); // {"get_api_version":"1.0"}
-        const [versionMajor, versionMinor] = response['get_api_version'].split('.').map(s => parseInt(s, 10));
-        if (versionMajor == API_VERSION_MAJOR) {
-            console.log('Extension and native application have compatible APIs.')
-            areMajorVersionsEqual = true;
-        } else if (versionMajor > API_VERSION_MAJOR) {
-            console.log('WARNING: Extension has to be updated.')
-        } else if (versionMajor < API_VERSION_MAJOR) {
-            console.log('WARNING: Native application has to be updated.')
-        }
-        return areMajorVersionsEqual;
-    // } catch(e) {
-    //     console.log(`e = ${e}`);
-    // }
+    let areMajorVersionsEqual = false;
+    let response = await sendNativeMessageAsync(NM_ENDPOINT_NAME, {"text": 'get_api_version'});
+    console.log(`response = ${JSON.stringify(response)}`);
+    const [versionMajor, versionMinor] = response['get_api_version'].split('.').map(s => parseInt(s, 10));
+
+    if (versionMajor === API_VERSION_MAJOR) {
+        console.log('Extension and native application have compatible APIs.');
+        areMajorVersionsEqual = true;
+    } else if (versionMajor > API_VERSION_MAJOR) {
+        console.log('WARNING: Extension has to be updated.');
+    } else if (versionMajor < API_VERSION_MAJOR) {
+        console.log('WARNING: Native application has to be updated.');
+    }
+
+    return areMajorVersionsEqual;
 }
 
 function connect() {
@@ -264,8 +271,8 @@ async function onButtonConnectClick() {
             console.log('Loading colours...');
             sendNativeMessage("colours");
         }
-    } catch(e) {
-        console.log(`ERROR: ${e.Message}`);
+    } catch(error) {
+        console.log(`ERROR: ${error.message}`);
     }
 }
 
@@ -306,7 +313,7 @@ window.addEventListener("load", function(event) {
 // });
 
 window.onbeforeunload = function() {
-  chrome.extension.getBackgroundPage().log("unloading...");
+    chrome.extension.getBackgroundPage().log("unloading...");
 };
 
 
